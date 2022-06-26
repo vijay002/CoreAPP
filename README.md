@@ -1,0 +1,2 @@
+# CoreAPP
+dot net core 
