@@ -1,0 +1,78 @@
+
+CREATE TABLE dbo.SMTPSettings
+	(
+	Id                    INT IDENTITY   NOT NULL,
+	ServerName            NVARCHAR (100) NULL,
+	FromAddress           NVARCHAR (100) NULL,
+	Port                  INT  NULL,
+	UseSSL                BIT NULL,
+	RequireAuthentication BIT NULL,
+	UserName              NVARCHAR (100) NULL,
+	Password              NVARCHAR (100) NULL,
+	SMTPSupplierDomain    NVARCHAR (100) NULL,
+	LeaveACopyOnServer    BIT NULL,
+	CreatedBy             NVARCHAR (MAX) NULL,
+	CreatedDate           DATETIME2 NOT NULL,
+	PRIMARY KEY (Id)
+	)
+	
+	
+	
+IF OBJECT_ID ('dbo.AspNetFeature') IS NOT NULL
+	DROP TABLE dbo.AspNetFeature
+GO
+
+CREATE TABLE dbo.AspNetFeature
+	(
+	  Id              UNIQUEIDENTIFIER NOT NULL
+	, Name            NVARCHAR (max) NULL
+	, ParentFeatureId UNIQUEIDENTIFIER NULL
+	, Area            NVARCHAR (max) NULL
+	, ControllerName  NVARCHAR (max) NULL
+	, ActionName      NVARCHAR (max) NULL
+	, IsExternal      BIT NOT NULL
+	, ExternalUrl     NVARCHAR (max) NULL
+	, DisplayOrder    INT NOT NULL
+	, Visible         BIT NOT NULL
+	, [Full]          BIT NOT NULL
+	, [Add]           BIT NOT NULL
+	, Edit            BIT NOT NULL
+	, [Delete]        BIT NOT NULL
+	, CONSTRAINT PK_AspNetFeature PRIMARY KEY (Id)
+	, CONSTRAINT FK_AspNetFeature_AspNetFeature_ParentFeatureId FOREIGN KEY (ParentFeatureId) REFERENCES dbo.AspNetFeature (Id)
+	)
+GO
+
+
+IF OBJECT_ID ('dbo.AspNetRoleFeature') IS NOT NULL
+	DROP TABLE dbo.AspNetRoleFeature
+GO
+
+CREATE TABLE dbo.AspNetRoleFeature
+	(
+	  RoleId          NVARCHAR (450) NOT NULL
+	, AspNetFeatureId UNIQUEIDENTIFIER NOT NULL
+	, Visible         BIT NOT NULL
+	, [Full]          BIT NOT NULL
+	, [Add]           BIT NOT NULL
+	, Edit            BIT NOT NULL
+	, [Delete]        BIT NOT NULL
+	, CONSTRAINT PK_AspNetRoleFeature PRIMARY KEY (RoleId, AspNetFeatureId)
+	, CONSTRAINT FK_AspNetRoleFeature_AspNetFeature_AspNetFeatureId FOREIGN KEY (AspNetFeatureId) REFERENCES dbo.AspNetFeature (Id) ON DELETE CASCADE
+	)
+GO
+
+CREATE INDEX IX_AspNetRoleFeature_AspNetFeatureId
+	ON dbo.AspNetRoleFeature (AspNetFeatureId)
+GO
+
+
+
+CREATE INDEX IX_AspNetFeature_ParentFeatureId
+	ON dbo.AspNetFeature (ParentFeatureId)
+GO
+
+
+
+
+
